@@ -1,3 +1,4 @@
+
 # Mega-Checker
 
 ![License](https://img.shields.io/github/license/Ggre55/Capmonster-Checker.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA)
@@ -50,6 +51,13 @@
 - I am not responsible for anything that may happen, such as, API Blocking, Account Termination, etc.
 - This **may** slow down your wifi and/or host computer
 - This was a quick project that was made for fun, so if you want to see further updates, star the repo & create an "issue" [here](https://github.com/Ggre55/Capmonster-Checker/issues)
+
+---------------------------------------
+### 🎥 Screenshot
+![megacheker](https://github.com/Ggre55/Mega-Checker/assets/79372809/8515d925-62de-4422-a1bb-687e64cc67af)
+![megachek2er](https://github.com/Ggre55/Mega-Checker/assets/79372809/542fbd66-74fe-4949-af84-4e4a510d8eb5)
+![megachek32er](https://github.com/Ggre55/Mega-Checker/assets/79372809/36b08421-4552-44ed-a125-69bd0b859216)
+![megachek342er](https://github.com/Ggre55/Mega-Checker/assets/79372809/95f83f04-465f-4b55-958c-a8326e5adc44)
 
 ---------------------------------------
 ### 📜 ChangeLog
