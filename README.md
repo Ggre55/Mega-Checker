@@ -1,4 +1,4 @@
-# CapMonster-Checker
+# Mega-Checker
 
 ![License](https://img.shields.io/github/license/Ggre55/Capmonster-Checker.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA)
 ![Stars](https://img.shields.io/github/stars/Ggre55/Capmonster-Checker.svg?style=for-the-badge&labelColor=black&color=f429ff&logo=IOTA)
@@ -22,7 +22,7 @@
 ---------------------------------------
 
 <p align="center">
-  CapMonster Checker is a Python script that helps you manage and monitor multiple CapMonster API keys efficiently. It allows you to generate new keys, check their balance, and receive notifications on a Discord webhook. With added proxy support and error handling, this tool ensures smooth and reliable key checking. The script uses threading for faster processing and automatically removes invalid proxies. Stay informed with proper logging and take advantage of the latest bug fixes and improvements. Simplify your CapMonster key management with this user-friendly checker tool.
+  Mega Checker is a Python script that helps you check thousands o Mega.nz accounts in minutes using officiale API key. It allows you to check if account is valid (bypass 2FA) check their balance, grabs full capture. this tool ensures smooth and reliable account checking. The script uses threading for faster processing. Stay informed with proper logging and take advantage of the latest bug fixes and improvements.best part is NO PROXIES NEEDED!!!
 
 </p>
 
@@ -30,9 +30,9 @@
 
 ### ⚙️ Installation
 > Checker:
-* Requires: `Python 3.10+`, `colorama`, `httpx`, `json`
+* Requires: `Python 3.10+`, `colorama`, `mega`, `json`
 * Start: `main.py`
-* to use proxies just create `proxies.txt` file in same directory and put in your proxies
+* to use proxies just use another tool lol, no proxy support for this one
 
 ---------------------------------------
 
@@ -40,9 +40,8 @@
 * User Friendly Interface
 * Fast Speeds
 * Simple & Easy Setup
-* Support proxy
+* NO proxy
 * Better error Handling
-* Remove Invalid Proxies
 * Threading or Asynchronous Requests
 
 ---------------------------------------
@@ -56,21 +55,17 @@
 ### 📜 ChangeLog
 ```diff
  
-! v0.0.1 (2/6/2023)
-> Initial Release ❤️
+! v0.0.1 (10/5/2023)
+> Initial Release(Not public) ❤️
 
-! v0.2.1 (4/8/2023)
+! v1.1.1 (4/8/2023)
 > Updated, bug fixes ❤️
-> Added proxy support:
-  Now, if there's a file named `proxies.txt` in the same folder as the script, the script will load the proxies from that file. If the user chooses to use proxies, it will randomly select one from the list of loaded proxies for each HTTP request. If the user decides not to use proxies, the script will make the HTTP requests without using any proxies.
-> Better error handling ❤️
-> Random Proxy Selection:
-  Instead of randomly selecting a proxy for each key check, we'll choose a single proxy and use it for multiple key checks before changing to another one. This will reduce the overhead of changing proxies frequently.
+> Better error handling
 > Threading or Asynchronous Requests:
   Using Python's `concurrent.futures` module to check multiple keys simultaneously with threading.
-> Remove Invalid Proxies:
-  We implement a function to check the validity of proxies before using them for HTTP requests. If a proxy is found to be invalid, it will be removed from the proxy pool.
 > Logging:
   We'll add proper logging to log the results, errors, and status of key checks and other operations.
+! v2.0.5 (10/5/2023)
+> Initial Release(public) ❤️
 ```
 ---------------------------------------
