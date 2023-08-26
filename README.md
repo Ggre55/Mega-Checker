@@ -56,7 +56,6 @@
 ### 🎥 Screenshot
 ![megacheker](https://github.com/Ggre55/Mega-Checker/assets/79372809/8515d925-62de-4422-a1bb-687e64cc67af)
 ![megachek2er](https://github.com/Ggre55/Mega-Checker/assets/79372809/542fbd66-74fe-4949-af84-4e4a510d8eb5)
-![megachek32er](https://github.com/Ggre55/Mega-Checker/assets/79372809/36b08421-4552-44ed-a125-69bd0b859216)
 ![megachek342er](https://github.com/Ggre55/Mega-Checker/assets/79372809/95f83f04-465f-4b55-958c-a8326e5adc44)
 
 ---------------------------------------
